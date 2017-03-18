@@ -8,14 +8,20 @@ Its reason of existence is for use during a [thunder talk](https://www.meetup.co
 Usage
 -----
 
+Clone:
+```bash
+git clone https://github.com/Procrat/chat-example
+cd chat-example
+```
+
 Set up [virtualenv](http://docs.python-guide.org/en/latest/dev/virtualenvs/):
-```python
+```bash
 virtualenv .env
 . .env/bin/activate
-pip install -r requirements
+pip install -r requirements.txt
 ```
 
 Run (with virtualenv activated):
-```python
+```bash
 FLASK_APP=app.py flask run
 ```
