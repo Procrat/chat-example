@@ -5,14 +5,36 @@
   <title></title>
 </head>
 <body>
-  {% for message in messages %}
-    <div>{{ message.sender }}: {{ message.content }}</div>
-  {% endfor %}
+  <div id="messages">
+    {% for message in messages %}
+      <div>{{ message.sender }}: {{ message.content }}</div>
+    {% endfor %}
+  </div>
 
-  <form action="/post" method="POST">
+  <form id="send-msg">
     Your name: <input type="text" name="sender" autofocus>
     Message: <input type="text" name="content">
     <input type="submit">
   </form>
+
+  <script src="https://code.jquery.com/jquery-3.2.0.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.slim.min.js"></script>
+  <script type="text/javascript" charset="utf-8">
+    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+
+    $(document).ready(function() {
+      socket.on('new-msg', function(data) {
+        $("#messages").append('<div>' + data.sender + ": " + data.content + '</div>');
+      });
+
+      $('#send-msg').submit(function(event) {
+        event.preventDefault();
+        var $form = $(event.target);
+        var sender = $form.find('input[name=sender]').val();
+        var content = $form.find('input[name=content]').val();
+        socket.emit('new-msg', {sender: sender, content: content})
+      })
+    });
+  </script>
 </body>
 </html>
