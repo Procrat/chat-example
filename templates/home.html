@@ -33,6 +33,7 @@
         var sender = $form.find('input[name=sender]').val();
         var content = $form.find('input[name=content]').val();
         socket.emit('new-msg', {sender: sender, content: content})
+        $form.find('input[name=content]').val('');
       })
     });
   </script>
