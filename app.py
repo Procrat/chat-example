@@ -1,6 +1,6 @@
 from flask import Flask, render_template
-from flask_sqlalchemy import SQLAlchemy
 from flask_socketio import SocketIO, emit
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
@@ -15,9 +15,6 @@ class Message(db.Model):
     sender = db.Column(db.String)
     content = db.Column(db.String)
 
-    def __repr__(self):
-        return 'Message "{}" from "{}"'.format(self.content, self.sender)
-
 
 db.create_all()
 
@@ -30,9 +27,7 @@ def home():
 
 @socketio.on('new-msg')
 def receive_message_through_socket(message_dict):
-    sender = message_dict['sender']
-    content = message_dict['content']
-    message = Message(sender=sender, content=content)
+    message = Message(**message_dict)
     db.session.add(message)
     db.session.commit()
     emit('new-msg', message_dict, broadcast=True)
