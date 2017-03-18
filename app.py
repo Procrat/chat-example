@@ -1,11 +1,8 @@
-from flask import Flask, render_template
-from flask_socketio import SocketIO, emit
+from flask import Flask, render_template, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
-
-socketio = SocketIO(app)
 
 db = SQLAlchemy(app)
 
@@ -25,9 +22,11 @@ def home():
     return render_template('home.html', messages=messages)
 
 
-@socketio.on('new-msg')
-def receive_message_through_socket(message_dict):
-    message = Message(**message_dict)
+@app.route('/new-msg', methods=['POST'])
+def receive_message():
+    sender = request.form['sender']
+    content = request.form['content']
+    message = Message(sender=sender, content=content)
     db.session.add(message)
     db.session.commit()
-    emit('new-msg', message_dict, broadcast=True)
+    return redirect('/')
